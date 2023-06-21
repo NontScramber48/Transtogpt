@@ -7,6 +7,7 @@ import 'package:chatgpt_course/widgets/chat_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:provider/provider.dart';
+import 'package:translator/translator.dart';
 
 import '../providers/models_provider.dart';
 import '../services/assets_manager.dart';
@@ -25,6 +26,9 @@ class _ChatScreenState extends State<ChatScreen> {
   late TextEditingController textEditingController;
   late ScrollController _listScrollController;
   late FocusNode focusNode;
+  GoogleTranslator translator =
+      new GoogleTranslator(); //using google translator
+
   @override
   void initState() {
     _listScrollController = ScrollController();
@@ -53,7 +57,7 @@ class _ChatScreenState extends State<ChatScreen> {
           padding: const EdgeInsets.all(8.0),
           child: Image.asset(AssetsManager.openaiLogo),
         ),
-        title: const Text("ChatGPT"),
+        title: const Text("AI Chat bot translator By Nont"),
         actions: [
           IconButton(
             onPressed: () async {
@@ -102,7 +106,27 @@ class _ChatScreenState extends State<ChatScreen> {
                         style: const TextStyle(color: Colors.white),
                         controller: textEditingController,
                         onSubmitted: (value) async {
-                          await sendMessageFCT(
+                          await translator
+                              .translate(textEditingController.text,
+                                  to: 'en') //translating to hi = hindi
+                              .then((output) {
+                            setState(() {
+                              textEditingController.text = output.toString();
+                              log(textEditingController.text);
+                              // Navigator.push(
+                              //     context,
+                              //     MaterialPageRoute(
+                              //         builder: (context) =>
+                              //
+
+                              //          ChatScreen(initialMessage: translatedText)));
+                            });
+                            log(textEditingController.text);
+                            return textEditingController.text;
+                          });
+                          textEditingController.text =
+                              textEditingController.text;
+                          sendMessageFCT(
                               modelsProvider: modelsProvider,
                               chatProvider: chatProvider);
                         },
@@ -113,7 +137,28 @@ class _ChatScreenState extends State<ChatScreen> {
                     ),
                     IconButton(
                         onPressed: () async {
-                          await sendMessageFCT(
+                          await translator
+                              .translate(textEditingController.text,
+                                  to: 'en') //translating to hi = hindi
+                              .then((output) {
+                            setState(() {
+                              textEditingController.text = output.toString();
+                              log(textEditingController.text);
+                              // Navigator.push(
+                              //     context,
+                              //     MaterialPageRoute(
+                              //         builder: (context) =>
+                              //
+
+                              //          ChatScreen(initialMessage: translatedText)));
+                            });
+                            log(textEditingController.text);
+                            return textEditingController.text +
+                                "   prompt to midjourney";
+                          });
+                          textEditingController.text =
+                              textEditingController.text;
+                          sendMessageFCT(
                               modelsProvider: modelsProvider,
                               chatProvider: chatProvider);
                         },
@@ -140,7 +185,8 @@ class _ChatScreenState extends State<ChatScreen> {
 
   Future<void> sendMessageFCT(
       {required ModelsProvider modelsProvider,
-      required ChatProvider chatProvider}) async {
+      required ChatProvider chatProvider,
+      data}) async {
     if (_isTyping) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
@@ -165,10 +211,30 @@ class _ChatScreenState extends State<ChatScreen> {
     }
     try {
       String msg = textEditingController.text;
+
+      translator
+          .translate(msg, to: 'en') //translating to hi = hindi
+          .then((output) {
+        setState(() {
+          msg = output.toString();
+          log(msg);
+          // Navigator.push(
+          //     context,
+          //     MaterialPageRoute(
+          //         builder: (context) =>
+          //
+
+          //          ChatScreen(initialMessage: translatedText)));
+        });
+        log(msg);
+        return msg;
+      });
       setState(() {
         _isTyping = true;
         // chatList.add(ChatModel(msg: textEditingController.text, chatIndex: 0));
-        chatProvider.addUserMessage(msg: msg);
+        // trans(data);
+
+        chatProvider.addUserMessage(msg: msg + " promt to Midjourney");
         textEditingController.clear();
         focusNode.unfocus();
       });
