@@ -57,7 +57,7 @@ class _ChatScreenState extends State<ChatScreen> {
           padding: const EdgeInsets.all(8.0),
           child: Image.asset(AssetsManager.openaiLogo),
         ),
-        title: const Text("AI Chat bot translator By Nont"),
+        title: const Text("AI Chat bot translator "),
         actions: [
           IconButton(
             onPressed: () async {
